@@ -1,3 +1,18 @@
+function getLife () {
+    heart = sprites.create(img`
+        . . f f . f f . . 
+        . f 2 2 f 2 2 f . 
+        f 2 1 2 2 2 2 2 f 
+        f 2 2 2 2 2 2 2 f 
+        f 2 2 2 2 2 2 2 f 
+        . f 2 2 2 2 2 f . 
+        . . f 2 2 2 f . . 
+        . . . f 2 f . . . 
+        . . . . f . . . . 
+        `, SpriteKind.Food)
+    heart.setPosition(10 + 12 * list.length, 10)
+    list.push(heart)
+}
 function makeDroppings () {
     gooseFeces = sprites.create(img`
         . . f . . f . . . 
@@ -109,6 +124,17 @@ function makeGoose () {
     goose.setPosition(160 + randint(0, 80), 30 * randint(0, 2) + 30)
     goose.setVelocity(-80 * gameSpeed, 0)
 }
+function loseLife () {
+    list[list.length - 1].destroy()
+    list.pop()
+    if (0 == list.length) {
+        gameRunning = 0
+        scene.setBackgroundColor(15)
+        game.setDialogTextColor(2)
+        game.showLongText("WASTED", DialogLayout.Bottom)
+        game.reset()
+    }
+}
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (movement < 2) {
         movement += 1
@@ -121,15 +147,17 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         pause(500)
         makeDroppings()
     } else {
-        gameRunning = 0
-        scene.setBackgroundColor(15)
-        game.setDialogTextColor(2)
-        game.showLongText("WASTED", DialogLayout.Bottom)
-        game.reset()
+        loseLife()
+        goose.destroy()
+        makeGoose()
+        gooseFeces.destroy()
+        makeDroppings()
     }
 })
 let goose: Sprite = null
 let jumping = 0
+let heart: Sprite = null
+let list: Sprite[] = []
 let gooseFeces: Sprite = null
 let gameRunning = 0
 let movement = 0
@@ -176,6 +204,10 @@ scene.setBackgroundColor(7)
 makeGoose()
 makeDroppings()
 gooseFeces.setVelocity(0, 0)
+list = []
+for (let index = 0; index < 2; index++) {
+    getLife()
+}
 forever(function () {
     if (gameRunning == 1) {
         info.changeScoreBy(1)
