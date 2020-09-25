@@ -1,5 +1,56 @@
 namespace SpriteKind {
     export const GOD = SpriteKind.create()
+    export const Environment = SpriteKind.create()
+}
+function animateEnv () {
+    env_cloud_randomizer = randint(0, 3)
+    if (env_cloud_randomizer == 0) {
+        env_cloud = sprites.create(img`
+            . . . . . . . 1 1 . . . . . . . 
+            . . . . . . 1 1 1 1 . . . . . . 
+            . . . . . 1 1 1 1 1 . . . . . . 
+            . . . . 1 1 1 1 1 1 1 . . 1 1 . 
+            . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            . . 1 1 1 1 1 1 . . . . . . . . 
+            `, SpriteKind.Environment)
+    } else if (env_cloud_randomizer == 1) {
+        env_cloud = sprites.create(img`
+            . . . . . . . . 1 1 1 1 1 . . . 
+            . . . . . . . . 1 1 1 1 1 1 . . 
+            . . . . 1 1 1 1 1 1 1 1 1 1 . . 
+            . . . . 1 1 1 1 1 1 1 1 1 1 . . 
+            . . 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
+            . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            1 1 1 1 . 1 1 1 1 1 1 1 1 1 1 1 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Environment)
+    } else if (env_cloud_randomizer == 2) {
+        env_cloud = sprites.create(img`
+            . . . . 1 . . . . . . . . . . . 
+            . . 1 1 1 . . . . . 1 1 1 1 1 . 
+            . 1 1 1 1 . . 1 1 1 1 1 1 1 1 1 
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
+            `, SpriteKind.Environment)
+    } else {
+        env_cloud = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . 1 . . . 1 . 1 . . . 1 . . . 1 
+            . 1 . . . 1 . 1 . . . 1 . . . 1 
+            . 1 . . . 1 . 1 1 . 1 1 1 . 1 1 
+            . 1 . . . 1 . . 1 . 1 . 1 . 1 . 
+            . 1 1 . 1 1 . . 1 1 1 . 1 1 1 . 
+            . 1 1 1 1 1 . . . 1 . . . 1 . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Environment)
+    }
+    env_cloud.setPosition(180 + randint(0, 40), randint(0, 20) + 5)
+    env_cloud.setVelocity(-20 * gameSpeed, 0)
 }
 function getLife () {
     heart = sprites.create(img`
@@ -206,6 +257,8 @@ let Bedi: Sprite = null
 let goose: Sprite = null
 let jumping = 0
 let heart: Sprite = null
+let env_cloud: Sprite = null
+let env_cloud_randomizer = 0
 let list2: Sprite[] = []
 let gooseFeces: Sprite = null
 let gameRunning = 0
@@ -374,6 +427,7 @@ scene.setBackgroundImage(img`
 makeGoose()
 makeDroppings()
 makeBedi()
+animateEnv()
 gooseFeces.setVelocity(0, 0)
 list2 = []
 for (let index = 0; index < 2; index++) {
@@ -396,6 +450,9 @@ forever(function () {
         if (info.score() == 1500 || Bedi.x < 0) {
             Bedi.destroy()
             makeBedi()
+        }
+        if (env_cloud.x < randint(0, 100)) {
+            animateEnv()
         }
     }
 })
