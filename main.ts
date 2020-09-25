@@ -14,10 +14,12 @@ function getLife () {
         . . . f 2 f . . . 
         . . . . f . . . . 
         `, SpriteKind.Food)
+    heart.z = 101
     heart.setPosition(10 + 12 * list2.length, 10)
     list2.push(heart)
 }
 function makeDroppings () {
+    me.z = 97
     gooseFeces = sprites.create(img`
         . . f . . f . . . 
         . . . . . . . . . 
@@ -91,6 +93,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function makeGoose () {
+    me.z = 98
     goose = sprites.create(img`
         ....ffff.................
         ..ffeeeef................
@@ -150,6 +153,7 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function makeBedi () {
+    me.z = 99
     Bedi = sprites.create(img`
         ..55...55..5..55....
         ...55...5....55.....
@@ -253,9 +257,7 @@ function animateEnv_Cloud () {
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (jumping == 1 && me.overlapsWith(gooseFeces)) {
-        gooseFeces.destroy()
-        pause(500)
-        makeDroppings()
+    	
     } else {
         loseLife()
         goose.destroy()
@@ -309,8 +311,10 @@ me = sprites.create(img`
     ....f11f11f.....
     .....ff.ff......
     `, SpriteKind.Player)
+me.z = 100
 me.y = 20
 game.splash("You're late for class!", "Avoid the geese!")
+game.splash("Jump over the droppings!", "Talk to prof Bedi!")
 gameSpeed = 1
 me.setPosition(20, 60)
 movement = 1
