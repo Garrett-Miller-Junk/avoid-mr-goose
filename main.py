@@ -94,6 +94,92 @@ def on_b_pressed():
         jumping = 0
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
 
+def animateEnv_trees():
+    global env_tree_randomizer
+    env_tree_randomizer = randint(0, 3)
+    if env_tree_randomizer == 0:
+        env_tree_list.append(sprites.create(img("""
+                    . . . . . . . c c . . . . . . . 
+                                . . . . c c c 6 5 c 6 6 . . . . 
+                                . . . . c 6 c 5 5 c 7 6 . . . . 
+                                . . . 6 c c 7 5 5 7 c 6 6 . . . 
+                                . . c c 7 7 7 7 7 5 7 7 c 6 . . 
+                                . 6 6 6 c 6 7 7 7 7 6 c c 6 6 . 
+                                c 7 7 7 6 c 7 c 6 7 6 7 7 7 7 6 
+                                c c c 6 6 6 c 6 6 6 6 7 7 6 6 6 
+                                . c c 7 6 6 6 6 6 7 7 7 7 c 6 . 
+                                . c 7 7 6 6 7 6 6 7 7 6 7 7 c . 
+                                . c c c c 7 7 6 f 7 7 c c c c . 
+                                . . . . c 7 c f f c 7 c . . . . 
+                                . . . . . 6 f e e e c . . . . . 
+                                . . . . . e e e e e e . . . . . 
+                                . . . . e e . e e . e e . . . . 
+                                . . . . . . . e e . . . . . . .
+                """),
+                SpriteKind.Environment))
+    elif env_tree_randomizer == 1:
+        env_tree_list.append(sprites.create(img("""
+                    . . . . . . . . 
+                                . . . . . . . . 
+                                . . . . . . . . 
+                                . . c c c . . . 
+                                . c c 6 6 c . . 
+                                c c 3 3 f 6 c . 
+                                c 6 c f 6 3 c . 
+                                c 3 6 3 3 3 c . 
+                                c 3 6 6 3 3 c . 
+                                c 3 3 6 6 3 c . 
+                                . c 3 3 3 6 . . 
+                                . . 6 7 6 . . . 
+                                . . 6 6 8 8 8 6 
+                                . . 6 8 7 7 7 6 
+                                . . 8 7 7 7 6 . 
+                                . . 8 8 8 6 . .
+                """),
+                SpriteKind.Environment))
+    elif env_tree_randomizer == 2:
+        env_tree_list.append(sprites.create(img("""
+                    . . . . . . . . 
+                                . . . . . . . . 
+                                . . . . . . . . 
+                                . . . . . . . . 
+                                . b b d d b b . 
+                                b 1 1 3 3 1 1 b 
+                                b 1 3 5 5 3 1 b 
+                                b d 3 5 5 3 d b 
+                                c 1 1 d d 1 1 c 
+                                c d 1 d d 1 d c 
+                                . c c 7 6 c c . 
+                                . . 6 7 6 . . . 
+                                . . 6 6 8 8 8 6 
+                                . . 6 8 7 7 7 6 
+                                . . 8 7 7 7 6 . 
+                                . . 8 8 8 6 . .
+                """),
+                SpriteKind.Environment))
+    else:
+        env_tree_list.append(sprites.create(img("""
+                    . . . . . . . . . . . . . . . . 
+                                . . . . . . c c c c 6 . . . . . 
+                                . . . . c c 6 7 7 5 5 6 6 . . . 
+                                . . c c 6 6 6 6 7 5 5 7 c c . . 
+                                . c 6 6 6 7 7 7 7 7 7 5 6 c c . 
+                                . c 6 6 7 7 7 5 7 6 7 7 7 6 c c 
+                                c 6 6 7 7 6 7 7 7 6 7 7 6 6 6 c 
+                                c c 6 6 6 7 6 7 6 6 6 6 5 7 6 c 
+                                c c c c 6 7 7 6 7 7 7 6 7 6 6 c 
+                                . c c 6 6 6 6 c 6 6 6 6 6 c c c 
+                                . c c 6 6 c 6 6 c 6 c 6 6 c c . 
+                                . . c c f f 6 6 c f f c c f . . 
+                                . . . . c f c c c f c f f . . . 
+                                . . . . . 4 f f f c . e . . . . 
+                                . . . . . . e e e . . 4 . . . . 
+                                . . . . . . . e e . e . . . . .
+                """),
+                SpriteKind.Environment))
+    env_tree_list[len(env_tree_list) - 1].set_position(180 + randint(0, 40), 20)
+    env_tree_list[len(env_tree_list) - 1].set_velocity(-80 * gameSpeed, 0)
+    env_tree_list[len(env_tree_list) - 1].z = -1
 def makeGoose():
     global goose
     goose = sprites.create(img("""
@@ -157,8 +243,9 @@ def makeCar():
                     . . . . . . . . . . . . . . . .
         """),
         SpriteKind.enemy)
-    car.set_position(180 + randint(0, 80), 60)
-    car.set_velocity(-40 * gameSpeed, 0)
+    car.set_position(180 + randint(0, 80), 100)
+    car.set_velocity(0, 0)
+    car.ax = gameSpeed * -40
 def loseLife():
     global gameRunning
     list2[len(list2) - 1].destroy()
@@ -216,13 +303,14 @@ def makeBedi():
     Bedi.set_position(2000 + randint(0, 1500), 30 * randint(0, 2) + 30)
     Bedi.set_velocity(-80 * gameSpeed, 0)
 def animateEnv_Road():
-    env_road_sprite_list.append(sprites.create(img("""
+    env_road_list.append(sprites.create(img("""
                 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
                         5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5
             """),
             SpriteKind.Environment))
-    env_road_sprite_list[len(env_road_sprite_list) - 1].set_position(180, 119)
-    env_road_sprite_list[len(env_road_sprite_list) - 1].set_velocity(-80 * gameSpeed, 0)
+    env_road_list[len(env_road_list) - 1].set_position(180, 119)
+    env_road_list[len(env_road_list) - 1].set_velocity(-80 * gameSpeed, 0)
+    env_road_list[len(env_road_list) - 1].z = -1
 
 def on_on_overlap(sprite, otherSprite):
     getLife()
@@ -234,7 +322,7 @@ def animateEnv_Cloud():
     global env_cloud_randomizer
     env_cloud_randomizer = randint(0, 3)
     if env_cloud_randomizer == 0:
-        env_cloud_sprite_list.append(sprites.create(img("""
+        env_cloud_list.append(sprites.create(img("""
                     . . . . . . . 1 1 . . . . . . . 
                                 . . . . . . 1 1 1 1 . . . . . . 
                                 . . . . . 1 1 1 1 1 . . . . . . 
@@ -246,7 +334,7 @@ def animateEnv_Cloud():
                 """),
                 SpriteKind.Environment))
     elif env_cloud_randomizer == 1:
-        env_cloud_sprite_list.append(sprites.create(img("""
+        env_cloud_list.append(sprites.create(img("""
                     . . . . . . . . 1 1 1 1 1 . . . 
                                 . . . . . . . . 1 1 1 1 1 1 . . 
                                 . . . . 1 1 1 1 1 1 1 1 1 1 . . 
@@ -258,7 +346,7 @@ def animateEnv_Cloud():
                 """),
                 SpriteKind.Environment))
     elif env_cloud_randomizer == 2:
-        env_cloud_sprite_list.append(sprites.create(img("""
+        env_cloud_list.append(sprites.create(img("""
                     . . . . 1 . . . . . . . . . . . 
                                 . . 1 1 1 . . . . . 1 1 1 1 1 . 
                                 . 1 1 1 1 . . 1 1 1 1 1 1 1 1 1 
@@ -270,7 +358,7 @@ def animateEnv_Cloud():
                 """),
                 SpriteKind.Environment))
     else:
-        env_cloud_sprite_list.append(sprites.create(img("""
+        env_cloud_list.append(sprites.create(img("""
                     . . . . . . . . . . . . . . . . 
                                 . 1 . . . 1 . 1 . . . 1 . . . 1 
                                 . 1 . . . 1 . 1 . . . 1 . . . 1 
@@ -281,8 +369,9 @@ def animateEnv_Cloud():
                                 . . . . . . . . . . . . . . . .
                 """),
                 SpriteKind.Environment))
-    env_cloud_sprite_list[len(env_cloud_sprite_list) - 1].set_position(180 + randint(0, 40), randint(0, 15) + 5)
-    env_cloud_sprite_list[len(env_cloud_sprite_list) - 1].set_velocity(-20 * gameSpeed, 0)
+    env_cloud_list[len(env_cloud_list) - 1].set_position(180 + randint(0, 40), randint(0, 15) + 5)
+    env_cloud_list[len(env_cloud_list) - 1].set_velocity(-20 * gameSpeed, 0)
+    env_cloud_list[len(env_cloud_list) - 1].z = -1
 
 def on_on_overlap2(sprite, otherSprite):
     if jumping == 1 and me.overlaps_with(gooseFeces):
@@ -297,15 +386,18 @@ def on_on_overlap2(sprite, otherSprite):
         makeDroppings()
 sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
 
-env_cloud_sprite_list: List[Sprite] = []
+car_counter = 0
+env_cloud_list: List[Sprite] = []
 env_cloud_randomizer = 0
-env_road_sprite_list: List[Sprite] = []
+env_road_list: List[Sprite] = []
 Bedi: Sprite = None
-car: Sprite = None
 goose: Sprite = None
+env_tree_list: List[Sprite] = []
+env_tree_randomizer = 0
 jumping = 0
 heart: Sprite = None
 list2: List[Sprite] = []
+car: Sprite = None
 gooseFeces: Sprite = None
 gameRunning = 0
 movement = 0
@@ -473,16 +565,20 @@ scene.set_background_image(img("""
 """))
 makeGoose()
 makeDroppings()
+makeCar()
 makeBedi()
 animateEnv_Cloud()
 animateEnv_Road()
+animateEnv_trees()
 gooseFeces.set_velocity(0, 0)
+car.set_velocity(0, 0)
+car.ax = 0
 list2 = []
 for index in range(2):
     getLife()
 
 def on_forever():
-    global gameSpeed
+    global gameSpeed, car_counter
     if gameRunning == 1:
         info.change_score_by(1)
         if info.score() > (gameSpeed - 0.9) * 3000:
@@ -493,17 +589,29 @@ def on_forever():
         if info.score() == 700 or gooseFeces.x < 0:
             gooseFeces.destroy()
             makeDroppings()
+        if info.score() >= 1000 and Math.percent_chance(gameSpeed * 0.01) and car_counter <= 0:
+            makeCar()
+            car_counter = randint(100, 1000)
+        if car_counter > 0:
+            car_counter = car_counter - 1
+        if car.x < -20:
+            car.destroy()
         if info.score() == 1500 or Bedi.x < 0:
             Bedi.destroy()
             makeBedi()
-        if env_cloud_sprite_list[len(env_cloud_sprite_list) - 1].x < randint(0, 100):
+        if env_cloud_list[len(env_cloud_list) - 1].x < randint(0, 100):
             animateEnv_Cloud()
-        if env_cloud_sprite_list[0].x < -20:
-            env_cloud_sprite_list[0].destroy()
-            env_cloud_sprite_list.shift()
-        if env_road_sprite_list[len(env_road_sprite_list) - 1].x < 100:
+        if env_cloud_list[0].x < -20:
+            env_cloud_list[0].destroy()
+            env_cloud_list.shift()
+        if env_road_list[len(env_road_list) - 1].x < 100:
             animateEnv_Road()
-        if env_road_sprite_list[0].x < -20:
-            env_road_sprite_list[0].destroy()
-            env_road_sprite_list.shift()
+        if env_road_list[0].x < -20:
+            env_road_list[0].destroy()
+            env_road_list.shift()
+        if env_tree_list[len(env_tree_list) - 1].x < randint(0, 100):
+            animateEnv_trees()
+        if env_tree_list[0].x < -20:
+            env_tree_list[0].destroy()
+            env_tree_list.shift()
 forever(on_forever)

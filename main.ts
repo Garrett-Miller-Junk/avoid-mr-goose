@@ -171,6 +171,7 @@ function animateEnv_trees () {
     }
     env_tree_list[env_tree_list.length - 1].setPosition(180 + randint(0, 40), 20)
     env_tree_list[env_tree_list.length - 1].setVelocity(-80 * gameSpeed, 0)
+    env_tree_list[env_tree_list.length - 1].z = -1
 }
 function makeGoose () {
     goose = sprites.create(img`
@@ -291,12 +292,13 @@ function makeBedi () {
     Bedi.setVelocity(-80 * gameSpeed, 0)
 }
 function animateEnv_Road () {
-    env_road_sprite_list.push(sprites.create(img`
+    env_road_list.push(sprites.create(img`
         5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
         5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
         `, SpriteKind.Environment))
-    env_road_sprite_list[env_road_sprite_list.length - 1].setPosition(180, 119)
-    env_road_sprite_list[env_road_sprite_list.length - 1].setVelocity(-80 * gameSpeed, 0)
+    env_road_list[env_road_list.length - 1].setPosition(180, 119)
+    env_road_list[env_road_list.length - 1].setVelocity(-80 * gameSpeed, 0)
+    env_road_list[env_road_list.length - 1].z = -1
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.GOD, function (sprite, otherSprite) {
     getLife()
@@ -306,7 +308,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.GOD, function (sprite, otherSpri
 function animateEnv_Cloud () {
     env_cloud_randomizer = randint(0, 3)
     if (env_cloud_randomizer == 0) {
-        env_cloud_sprite_list.push(sprites.create(img`
+        env_cloud_list.push(sprites.create(img`
             . . . . . . . 1 1 . . . . . . . 
             . . . . . . 1 1 1 1 . . . . . . 
             . . . . . 1 1 1 1 1 . . . . . . 
@@ -317,7 +319,7 @@ function animateEnv_Cloud () {
             . . 1 1 1 1 1 1 . . . . . . . . 
             `, SpriteKind.Environment))
     } else if (env_cloud_randomizer == 1) {
-        env_cloud_sprite_list.push(sprites.create(img`
+        env_cloud_list.push(sprites.create(img`
             . . . . . . . . 1 1 1 1 1 . . . 
             . . . . . . . . 1 1 1 1 1 1 . . 
             . . . . 1 1 1 1 1 1 1 1 1 1 . . 
@@ -328,7 +330,7 @@ function animateEnv_Cloud () {
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Environment))
     } else if (env_cloud_randomizer == 2) {
-        env_cloud_sprite_list.push(sprites.create(img`
+        env_cloud_list.push(sprites.create(img`
             . . . . 1 . . . . . . . . . . . 
             . . 1 1 1 . . . . . 1 1 1 1 1 . 
             . 1 1 1 1 . . 1 1 1 1 1 1 1 1 1 
@@ -339,7 +341,7 @@ function animateEnv_Cloud () {
             1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
             `, SpriteKind.Environment))
     } else {
-        env_cloud_sprite_list.push(sprites.create(img`
+        env_cloud_list.push(sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . 1 . . . 1 . 1 . . . 1 . . . 1 
             . 1 . . . 1 . 1 . . . 1 . . . 1 
@@ -350,8 +352,9 @@ function animateEnv_Cloud () {
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Environment))
     }
-    env_cloud_sprite_list[env_cloud_sprite_list.length - 1].setPosition(180 + randint(0, 40), randint(0, 15) + 5)
-    env_cloud_sprite_list[env_cloud_sprite_list.length - 1].setVelocity(-20 * gameSpeed, 0)
+    env_cloud_list[env_cloud_list.length - 1].setPosition(180 + randint(0, 40), randint(0, 15) + 5)
+    env_cloud_list[env_cloud_list.length - 1].setVelocity(-20 * gameSpeed, 0)
+    env_cloud_list[env_cloud_list.length - 1].z = -1
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (jumping == 1 && me.overlapsWith(gooseFeces)) {
@@ -367,9 +370,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     }
 })
 let car_counter = 0
-let env_cloud_sprite_list: Sprite[] = []
+let env_cloud_list: Sprite[] = []
 let env_cloud_randomizer = 0
-let env_road_sprite_list: Sprite[] = []
+let env_road_list: Sprite[] = []
 let Bedi: Sprite = null
 let goose: Sprite = null
 let env_tree_list: Sprite[] = []
@@ -584,19 +587,19 @@ forever(function () {
             Bedi.destroy()
             makeBedi()
         }
-        if (env_cloud_sprite_list[env_cloud_sprite_list.length - 1].x < randint(0, 100)) {
+        if (env_cloud_list[env_cloud_list.length - 1].x < randint(0, 100)) {
             animateEnv_Cloud()
         }
-        if (env_cloud_sprite_list[0].x < -20) {
-            env_cloud_sprite_list[0].destroy()
-            env_cloud_sprite_list.shift()
+        if (env_cloud_list[0].x < -20) {
+            env_cloud_list[0].destroy()
+            env_cloud_list.shift()
         }
-        if (env_road_sprite_list[env_road_sprite_list.length - 1].x < 100) {
+        if (env_road_list[env_road_list.length - 1].x < 100) {
             animateEnv_Road()
         }
-        if (env_road_sprite_list[0].x < -20) {
-            env_road_sprite_list[0].destroy()
-            env_road_sprite_list.shift()
+        if (env_road_list[0].x < -20) {
+            env_road_list[0].destroy()
+            env_road_list.shift()
         }
         if (env_tree_list[env_tree_list.length - 1].x < randint(0, 100)) {
             animateEnv_trees()
