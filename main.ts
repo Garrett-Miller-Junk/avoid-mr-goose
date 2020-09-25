@@ -192,6 +192,7 @@ function animateEnv_Road () {
         `, SpriteKind.Environment)
     env_road.setPosition(180, 119)
     env_road.setVelocity(-80 * gameSpeed, 0)
+    RoadList.push(env_road)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.GOD, function (sprite, otherSprite) {
     getLife()
@@ -247,6 +248,8 @@ function animateEnv_Cloud () {
     }
     env_cloud.setPosition(180 + randint(0, 40), randint(0, 20) + 5)
     env_cloud.setVelocity(-20 * gameSpeed, 0)
+    CloudList.push(env_cloud)
+    numClouds += 1
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (jumping == 1 && me.overlapsWith(gooseFeces)) {
@@ -270,6 +273,8 @@ let jumping = 0
 let heart: Sprite = null
 let list2: Sprite[] = []
 let gooseFeces: Sprite = null
+let RoadList: Sprite[] = []
+let CloudList: Sprite[] = []
 let gameRunning = 0
 let movement = 0
 let gameSpeed = 0
@@ -436,6 +441,10 @@ scene.setBackgroundImage(img`
 makeGoose()
 makeDroppings()
 makeBedi()
+let maxClouds = 3
+let numClouds = 0
+CloudList = []
+RoadList = []
 animateEnv_Cloud()
 animateEnv_Road()
 gooseFeces.setVelocity(0, 0)
@@ -449,23 +458,32 @@ forever(function () {
         if (info.score() > (gameSpeed - 0.9) * 3000) {
             gameSpeed += 0.1
         }
-        if (goose.x < 0) {
+        if (goose.x < -20) {
             goose.destroy()
             makeGoose()
         }
-        if (info.score() == 700 || gooseFeces.x < 0) {
+        if (info.score() == 700 || gooseFeces.x < -20) {
             gooseFeces.destroy()
             makeDroppings()
         }
-        if (info.score() == 1500 || Bedi.x < 0) {
+        if (info.score() == 1500 || Bedi.x < -20) {
             Bedi.destroy()
             makeBedi()
         }
-        if (env_cloud.x < randint(0, 100)) {
+        if (env_cloud.x < randint(0, 100) && numClouds < maxClouds) {
             animateEnv_Cloud()
         }
         if (env_road.x < 100) {
             animateEnv_Road()
+        }
+        if (RoadList[0].x < -20) {
+            RoadList[0].destroy()
+            RoadList.shift()
+        }
+        if (CloudList[0].x < -20) {
+            CloudList[0].destroy()
+            numClouds += -1
+            CloudList.shift()
         }
     }
 })
