@@ -10,8 +10,8 @@ function getLife () {
         . . . f 2 f . . . 
         . . . . f . . . . 
         `, SpriteKind.Food)
-    heart.setPosition(10 + 12 * list.length, 10)
-    list.push(heart)
+    heart.setPosition(10 + 12 * list2.length, 10)
+    list2.push(heart)
 }
 function makeDroppings () {
     gooseFeces = sprites.create(img`
@@ -26,15 +26,9 @@ function makeDroppings () {
         e e e . e . e . . 
         . . e e . . . . . 
         `, SpriteKind.Enemy)
-    gooseFeces.setPosition(160 + randint(0, 80), 30 * randint(0, 2) + 30)
+    gooseFeces.setPosition(180 + randint(0, 80), 30 * randint(0, 2) + 30)
     gooseFeces.setVelocity(-80 * gameSpeed, 0)
 }
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (movement > 0) {
-        movement += -1
-        me.y += -30
-    }
-})
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (jumping == 0) {
         jumping = 1
@@ -124,10 +118,18 @@ function makeGoose () {
     goose.setPosition(160 + randint(0, 80), 30 * randint(0, 2) + 30)
     goose.setVelocity(-80 * gameSpeed, 0)
 }
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (jumping == 0) {
+        if (movement < 2) {
+            movement += 1
+            me.y += 30
+        }
+    }
+})
 function loseLife () {
-    list[list.length - 1].destroy()
-    list.pop()
-    if (0 == list.length) {
+    list2[list2.length - 1].destroy()
+    list2.pop()
+    if (0 == list2.length) {
         gameRunning = 0
         scene.setBackgroundColor(15)
         game.setDialogTextColor(2)
@@ -135,12 +137,50 @@ function loseLife () {
         game.reset()
     }
 }
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (movement < 2) {
-        movement += 1
-        me.y += 30
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (jumping == 0) {
+        if (movement > 0) {
+            movement += -1
+            me.y += -30
+        }
     }
 })
+function makeBedi () {
+    Bedi = sprites.create(img`
+        ..55...55..5..55....
+        ...55...5....55.....
+        55..55.fffff.5......
+        .55...fffffff....555
+        ..55.fffffffff..55..
+        5...fffffffffff.5...
+        555.fffefffffff...55
+        ....ffeeeeeeefff.55.
+        ...ffefffefffefe....
+        ..fefe1f1e1f1efe..55
+        55fefe1f1e1f1eff.55.
+        ...ffedddddddef.....
+        ..5.fddd333dddf...55
+        555..fdddddddff..55.
+        ....fffdddddff.....5
+        ....f1f11111f1f..555
+        5555f1f11111f1f.55..
+        ....f1f11111f1f.5...
+        ....f1f11111f1f.....
+        ..5.f1f11111f1f.5555
+        555.fffffffffff.....
+        ....fefccfccfef.555.
+        .55..ffccfccff..5.55
+        5.....fccfccf.......
+        ...55.fffffff..55555
+        ...5..feefeef......5
+        ..5...f11f11f.5555..
+        .55..5.ff.ff.....55.
+        .5..55..5...5.......
+        ....5...5...555.....
+        `, SpriteKind.Player)
+    Bedi.setPosition(200 + randint(0, 80), 30 * randint(0, 2) + 30)
+    Bedi.setVelocity(-80 * gameSpeed, 0)
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (jumping == 1 && me.overlapsWith(gooseFeces)) {
         gooseFeces.destroy()
@@ -154,10 +194,11 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         makeDroppings()
     }
 })
+let Bedi: Sprite = null
 let goose: Sprite = null
 let jumping = 0
 let heart: Sprite = null
-let list: Sprite[] = []
+let list2: Sprite[] = []
 let gooseFeces: Sprite = null
 let gameRunning = 0
 let movement = 0
@@ -203,8 +244,9 @@ info.setScore(0)
 scene.setBackgroundColor(7)
 makeGoose()
 makeDroppings()
+makeBedi()
 gooseFeces.setVelocity(0, 0)
-list = []
+list2 = []
 for (let index = 0; index < 2; index++) {
     getLife()
 }
@@ -221,6 +263,10 @@ forever(function () {
         if (info.score() == 700 || gooseFeces.x < 0) {
             gooseFeces.destroy()
             makeDroppings()
+        }
+        if (info.score() == 1500 || Bedi.x < 0) {
+            Bedi.destroy()
+            makeBedi()
         }
     }
 })

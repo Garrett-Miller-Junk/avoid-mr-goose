@@ -1,3 +1,19 @@
+def getLife():
+    global heart
+    heart = sprites.create(img("""
+            . . f f . f f . . 
+                    . f 2 2 f 2 2 f . 
+                    f 2 1 2 2 2 2 2 f 
+                    f 2 2 2 2 2 2 2 f 
+                    f 2 2 2 2 2 2 2 f 
+                    . f 2 2 2 2 2 f . 
+                    . . f 2 2 2 f . . 
+                    . . . f 2 f . . . 
+                    . . . . f . . . .
+        """),
+        SpriteKind.food)
+    heart.set_position(10 + 12 * len(list2), 10)
+    list2.append(heart)
 def makeDroppings():
     global gooseFeces
     gooseFeces = sprites.create(img("""
@@ -18,9 +34,10 @@ def makeDroppings():
 
 def on_up_pressed():
     global movement
-    if movement > 0:
-        movement += -1
-        me.y += -30
+    if jumping == 0:
+        if movement > 0:
+            movement += -1
+            me.y += -30
 controller.up.on_event(ControllerButtonEvent.PRESSED, on_up_pressed)
 
 def on_b_pressed():
@@ -49,7 +66,6 @@ def on_b_pressed():
                         ....f11f11ffffff
                         ....fffffff.....
         """))
-        me.y += 0
         pause(500)
         me.set_image(img("""
             .....fffff......
@@ -79,65 +95,79 @@ def on_b_pressed():
                         ....f11f11f.....
                         .....ff.ff......
         """))
-        me.y += 0
         jumping = 0
 controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
 
 def makeGoose():
     global goose
     goose = sprites.create(img("""
-        ....ffff.................
-        ..ffeeeef................
-        .fcceefeef...............
-        fccceeeeeef..............
-        fccceeeeeeef.............
-        .ffffffeeeeef............
-        .......feeeeefff...ffffff
-        ......f1eeeeeeeffff1eee1f
-        .......f1eeeeeeeeeeeee1ef
-        ......f1eeeeffffeeeee1eef
-        ......feeeeffffffeee1eeef
-        ......feeeff5555ffeeeee1f
-        .....feeeeff5555ffeeee1ff
-        .....feeeeff5555ffeeee1f.
-        .....feee1fff55fffeeeef..
-        .....f1eee1ffffffeeeef...
-        .....f1eeee1ffffeeeef....
-        ......f11eee11eeeeeef....
-        .......fffeeeeeeeeccf....
-        ..........fccfffffccf....
-        ..........fccf...fccf....
-        ..........fccf...fccf....
-        ..........fccf...fccf....
-        .........ffccf..ffccf....
-        .........fcccf..fcccf....
-        .........fffff..fffff....
-    """),
+            ....ffff.................
+                    ..ffeeeef................
+                    .fcceefeef...............
+                    fccceeeeeef..............
+                    fccceeeeeeef.............
+                    .ffffffeeeeef............
+                    .......feeeeefff...ffffff
+                    ......f1eeeeeeeffff1eee1f
+                    .......f1eeeeeeeeeeeee1ef
+                    ......f1eeeeffffeeeee1eef
+                    ......feeeeffffffeee1eeef
+                    ......feeeff5555ffeeeee1f
+                    .....feeeeff5555ffeeee1ff
+                    .....feeeeff5555ffeeee1f.
+                    .....feee1fff55fffeeeef..
+                    .....f1eee1ffffffeeeef...
+                    .....f1eeee1ffffeeeef....
+                    ......f11eee11eeeeeef....
+                    .......fffeeeeeeeeccf....
+                    ..........fccfffffccf....
+                    ..........fccf...fccf....
+                    ..........fccf...fccf....
+                    ..........fccf...fccf....
+                    .........ffccf..ffccf....
+                    .........fcccf..fcccf....
+                    .........fffff..fffff....
+        """),
         SpriteKind.enemy)
     goose.set_position(160 + randint(0, 80), 30 * randint(0, 2) + 30)
     goose.set_velocity(-80 * gameSpeed, 0)
-
-def on_down_pressed():
-    global movement
-    if movement < 2:
-        movement += 1
-        me.y += 30
-controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
-
-def on_on_overlap(sprite, otherSprite):
+    
+def loseLife():
     global gameRunning
-    if jumping == 1 and me.overlaps_with(gooseFeces):
-        pass
-    else:
+    list2[len(list2) - 1].destroy()
+    list2.pop()
+    if 0 == len(list2):
         gameRunning = 0
         scene.set_background_color(15)
         game.set_dialog_text_color(2)
         game.show_long_text("WASTED", DialogLayout.BOTTOM)
         game.reset()
+
+def on_down_pressed():
+    global movement
+    if jumping == 0:
+        if movement < 2:
+            movement += 1
+            me.y += 30
+controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
+
+def on_on_overlap(sprite, otherSprite):
+    if jumping == 1 and me.overlaps_with(gooseFeces):
+        gooseFeces.destroy()
+        pause(500)
+        makeDroppings()
+    else:
+        loseLife()
+        goose.destroy()
+        makeGoose()
+        gooseFeces.destroy()
+        makeDroppings()
 sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap)
 
 goose: Sprite = None
 jumping = 0
+heart: Sprite = None
+list2: List[Sprite] = []
 gooseFeces: Sprite = None
 gameRunning = 0
 movement = 0
@@ -185,6 +215,9 @@ scene.set_background_color(7)
 makeGoose()
 makeDroppings()
 gooseFeces.set_velocity(0, 0)
+list2 = []
+for index in range(2):
+    getLife()
 
 def on_forever():
     global gameSpeed
