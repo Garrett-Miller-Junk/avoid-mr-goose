@@ -1,3 +1,6 @@
+namespace SpriteKind {
+    export const GOD = SpriteKind.create()
+}
 function getLife () {
     heart = sprites.create(img`
         . . f f . f f . . 
@@ -177,10 +180,15 @@ function makeBedi () {
         .55..5.ff.ff.....55.
         .5..55..5...5.......
         ....5...5...555.....
-        `, SpriteKind.Player)
-    Bedi.setPosition(200 + randint(0, 80), 30 * randint(0, 2) + 30)
+        `, SpriteKind.GOD)
+    Bedi.setPosition(2000 + randint(0, 1500), 30 * randint(0, 2) + 30)
     Bedi.setVelocity(-80 * gameSpeed, 0)
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.GOD, function (sprite, otherSprite) {
+    getLife()
+    Bedi.destroy()
+    makeBedi()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (jumping == 1 && me.overlapsWith(gooseFeces)) {
         gooseFeces.destroy()
