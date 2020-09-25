@@ -124,12 +124,34 @@ function makeGoose () {
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     if (jumping == 0) {
-        if (movement < 2) {
-            movement += 1
-            me.y += 30
+        if (movement > 0) {
+            movement += -1
+            me.y += -30
         }
     }
 })
+function makeCar () {
+    car = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 2 2 2 2 2 2 2 2 . . 
+        . . . . . 2 c 2 2 2 2 2 2 4 2 . 
+        . . . . 2 c c 2 2 2 2 2 2 4 c 2 
+        . . d 2 4 c c 2 4 4 4 4 4 4 c c 
+        . d 2 2 4 c b e e e e e e e 2 c 
+        . 2 2 2 4 b e e b b b e b b e 2 
+        . 2 2 2 2 2 e b b b b e b b b e 
+        . 2 2 2 2 e 2 2 2 2 2 e 2 2 2 e 
+        . 2 d d 2 e f e e e f e e e e e 
+        . d d 2 e e e f e e f e e e e e 
+        . e e e e e e e f f f e e e e e 
+        . e e e e f f f e e e e f f f f 
+        . . . e f f f f f e e f f f f f 
+        . . . . f f f f . . . . f f f . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    car.setPosition(180 + randint(0, 80), 60)
+    car.setVelocity(-120 * gameSpeed, 0)
+}
 function loseLife () {
     list2[list2.length - 1].destroy()
     list2.pop()
@@ -143,9 +165,9 @@ function loseLife () {
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (jumping == 0) {
-        if (movement > 0) {
-            movement += -1
-            me.y += -30
+        if (movement < 2) {
+            movement += 1
+            me.y += 30
         }
     }
 })
@@ -186,12 +208,12 @@ function makeBedi () {
     Bedi.setVelocity(-80 * gameSpeed, 0)
 }
 function animateEnv_Road () {
-    env_road = sprites.create(img`
+    env_road_sprite_list.push(sprites.create(img`
         5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
         5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
-        `, SpriteKind.Environment)
-    env_road.setPosition(180, 119)
-    env_road.setVelocity(-80 * gameSpeed, 0)
+        `, SpriteKind.Environment))
+    env_road_sprite_list[env_road_sprite_list.length - 1].setPosition(180, 119)
+    env_road_sprite_list[env_road_sprite_list.length - 1].setVelocity(-80 * gameSpeed, 0)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.GOD, function (sprite, otherSprite) {
     getLife()
@@ -201,7 +223,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.GOD, function (sprite, otherSpri
 function animateEnv_Cloud () {
     env_cloud_randomizer = randint(0, 3)
     if (env_cloud_randomizer == 0) {
-        env_cloud = sprites.create(img`
+        env_cloud_sprite_list.push(sprites.create(img`
             . . . . . . . 1 1 . . . . . . . 
             . . . . . . 1 1 1 1 . . . . . . 
             . . . . . 1 1 1 1 1 . . . . . . 
@@ -210,9 +232,9 @@ function animateEnv_Cloud () {
             . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
             1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
             . . 1 1 1 1 1 1 . . . . . . . . 
-            `, SpriteKind.Environment)
+            `, SpriteKind.Environment))
     } else if (env_cloud_randomizer == 1) {
-        env_cloud = sprites.create(img`
+        env_cloud_sprite_list.push(sprites.create(img`
             . . . . . . . . 1 1 1 1 1 . . . 
             . . . . . . . . 1 1 1 1 1 1 . . 
             . . . . 1 1 1 1 1 1 1 1 1 1 . . 
@@ -221,9 +243,9 @@ function animateEnv_Cloud () {
             . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
             1 1 1 1 . 1 1 1 1 1 1 1 1 1 1 1 
             . . . . . . . . . . . . . . . . 
-            `, SpriteKind.Environment)
+            `, SpriteKind.Environment))
     } else if (env_cloud_randomizer == 2) {
-        env_cloud = sprites.create(img`
+        env_cloud_sprite_list.push(sprites.create(img`
             . . . . 1 . . . . . . . . . . . 
             . . 1 1 1 . . . . . 1 1 1 1 1 . 
             . 1 1 1 1 . . 1 1 1 1 1 1 1 1 1 
@@ -232,9 +254,9 @@ function animateEnv_Cloud () {
             1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
             . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
             1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
-            `, SpriteKind.Environment)
+            `, SpriteKind.Environment))
     } else {
-        env_cloud = sprites.create(img`
+        env_cloud_sprite_list.push(sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . 1 . . . 1 . 1 . . . 1 . . . 1 
             . 1 . . . 1 . 1 . . . 1 . . . 1 
@@ -243,10 +265,10 @@ function animateEnv_Cloud () {
             . 1 1 . 1 1 . . 1 1 1 . 1 1 1 . 
             . 1 1 1 1 1 . . . 1 . . . 1 . . 
             . . . . . . . . . . . . . . . . 
-            `, SpriteKind.Environment)
+            `, SpriteKind.Environment))
     }
-    env_cloud.setPosition(180 + randint(0, 40), randint(0, 20) + 5)
-    env_cloud.setVelocity(-20 * gameSpeed, 0)
+    env_cloud_sprite_list[env_cloud_sprite_list.length - 1].setPosition(180 + randint(0, 40), randint(0, 15) + 5)
+    env_cloud_sprite_list[env_cloud_sprite_list.length - 1].setVelocity(-20 * gameSpeed, 0)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (jumping == 1 && me.overlapsWith(gooseFeces)) {
@@ -261,10 +283,11 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         makeDroppings()
     }
 })
-let env_cloud: Sprite = null
+let env_cloud_sprite_list: Sprite[] = []
 let env_cloud_randomizer = 0
-let env_road: Sprite = null
+let env_road_sprite_list: Sprite[] = []
 let Bedi: Sprite = null
+let car: Sprite = null
 let goose: Sprite = null
 let jumping = 0
 let heart: Sprite = null
@@ -461,11 +484,19 @@ forever(function () {
             Bedi.destroy()
             makeBedi()
         }
-        if (env_cloud.x < randint(0, 100)) {
+        if (env_cloud_sprite_list[env_cloud_sprite_list.length - 1].x < randint(0, 100)) {
             animateEnv_Cloud()
         }
-        if (env_road.x < 100) {
+        if (env_cloud_sprite_list[0].x < -20) {
+            env_cloud_sprite_list[0].destroy()
+            env_cloud_sprite_list.shift()
+        }
+        if (env_road_sprite_list[env_road_sprite_list.length - 1].x < 100) {
             animateEnv_Road()
+        }
+        if (env_road_sprite_list[0].x < -20) {
+            env_road_sprite_list[0].destroy()
+            env_road_sprite_list.shift()
         }
     }
 })
