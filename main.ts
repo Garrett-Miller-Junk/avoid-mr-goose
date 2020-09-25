@@ -90,6 +90,88 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         jumping = 0
     }
 })
+function animateEnv_trees () {
+    env_tree_randomizer = randint(0, 3)
+    if (env_tree_randomizer == 0) {
+        env_tree_list.push(sprites.create(img`
+            . . . . . . . c c . . . . . . . 
+            . . . . c c c 6 5 c 6 6 . . . . 
+            . . . . c 6 c 5 5 c 7 6 . . . . 
+            . . . 6 c c 7 5 5 7 c 6 6 . . . 
+            . . c c 7 7 7 7 7 5 7 7 c 6 . . 
+            . 6 6 6 c 6 7 7 7 7 6 c c 6 6 . 
+            c 7 7 7 6 c 7 c 6 7 6 7 7 7 7 6 
+            c c c 6 6 6 c 6 6 6 6 7 7 6 6 6 
+            . c c 7 6 6 6 6 6 7 7 7 7 c 6 . 
+            . c 7 7 6 6 7 6 6 7 7 6 7 7 c . 
+            . c c c c 7 7 6 f 7 7 c c c c . 
+            . . . . c 7 c f f c 7 c . . . . 
+            . . . . . 6 f e e e c . . . . . 
+            . . . . . e e e e e e . . . . . 
+            . . . . e e . e e . e e . . . . 
+            . . . . . . . e e . . . . . . . 
+            `, SpriteKind.Environment))
+    } else if (env_tree_randomizer == 1) {
+        env_tree_list.push(sprites.create(img`
+            . . . . . . . . 
+            . . . . . . . . 
+            . . . . . . . . 
+            . . c c c . . . 
+            . c c 6 6 c . . 
+            c c 3 3 f 6 c . 
+            c 6 c f 6 3 c . 
+            c 3 6 3 3 3 c . 
+            c 3 6 6 3 3 c . 
+            c 3 3 6 6 3 c . 
+            . c 3 3 3 6 . . 
+            . . 6 7 6 . . . 
+            . . 6 6 8 8 8 6 
+            . . 6 8 7 7 7 6 
+            . . 8 7 7 7 6 . 
+            . . 8 8 8 6 . . 
+            `, SpriteKind.Environment))
+    } else if (env_tree_randomizer == 2) {
+        env_tree_list.push(sprites.create(img`
+            . . . . . . . . 
+            . . . . . . . . 
+            . . . . . . . . 
+            . . . . . . . . 
+            . b b d d b b . 
+            b 1 1 3 3 1 1 b 
+            b 1 3 5 5 3 1 b 
+            b d 3 5 5 3 d b 
+            c 1 1 d d 1 1 c 
+            c d 1 d d 1 d c 
+            . c c 7 6 c c . 
+            . . 6 7 6 . . . 
+            . . 6 6 8 8 8 6 
+            . . 6 8 7 7 7 6 
+            . . 8 7 7 7 6 . 
+            . . 8 8 8 6 . . 
+            `, SpriteKind.Environment))
+    } else {
+        env_tree_list.push(sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . c c c c 6 . . . . . 
+            . . . . c c 6 7 7 5 5 6 6 . . . 
+            . . c c 6 6 6 6 7 5 5 7 c c . . 
+            . c 6 6 6 7 7 7 7 7 7 5 6 c c . 
+            . c 6 6 7 7 7 5 7 6 7 7 7 6 c c 
+            c 6 6 7 7 6 7 7 7 6 7 7 6 6 6 c 
+            c c 6 6 6 7 6 7 6 6 6 6 5 7 6 c 
+            c c c c 6 7 7 6 7 7 7 6 7 6 6 c 
+            . c c 6 6 6 6 c 6 6 6 6 6 c c c 
+            . c c 6 6 c 6 6 c 6 c 6 6 c c . 
+            . . c c f f 6 6 c f f c c f . . 
+            . . . . c f c c c f c f f . . . 
+            . . . . . 4 f f f c . e . . . . 
+            . . . . . . e e e . . 4 . . . . 
+            . . . . . . . e e . e . . . . . 
+            `, SpriteKind.Environment))
+    }
+    env_tree_list[env_tree_list.length - 1].setPosition(180 + randint(0, 40), 20)
+    env_tree_list[env_tree_list.length - 1].setVelocity(-80 * gameSpeed, 0)
+}
 function makeGoose () {
     goose = sprites.create(img`
         ....ffff.................
@@ -290,6 +372,8 @@ let env_cloud_randomizer = 0
 let env_road_sprite_list: Sprite[] = []
 let Bedi: Sprite = null
 let goose: Sprite = null
+let env_tree_list: Sprite[] = []
+let env_tree_randomizer = 0
 let jumping = 0
 let heart: Sprite = null
 let list2: Sprite[] = []
@@ -464,6 +548,7 @@ makeCar()
 makeBedi()
 animateEnv_Cloud()
 animateEnv_Road()
+animateEnv_trees()
 gooseFeces.setVelocity(0, 0)
 car.setVelocity(0, 0)
 car.ax = 0
@@ -512,6 +597,13 @@ forever(function () {
         if (env_road_sprite_list[0].x < -20) {
             env_road_sprite_list[0].destroy()
             env_road_sprite_list.shift()
+        }
+        if (env_tree_list[env_tree_list.length - 1].x < randint(0, 100)) {
+            animateEnv_trees()
+        }
+        if (env_tree_list[0].x < -20) {
+            env_tree_list[0].destroy()
+            env_tree_list.shift()
         }
     }
 })
