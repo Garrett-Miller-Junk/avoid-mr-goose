@@ -1,3 +1,6 @@
+@namespace
+class SpriteKind:
+    GOD = SpriteKind.create()
 def getLife():
     global heart
     heart = sprites.create(img("""
@@ -29,16 +32,8 @@ def makeDroppings():
                     . . e e . . . . .
         """),
         SpriteKind.enemy)
-    gooseFeces.set_position(160 + randint(0, 80), 30 * randint(0, 2) + 30)
+    gooseFeces.set_position(180 + randint(0, 80), 30 * randint(0, 2) + 30)
     gooseFeces.set_velocity(-80 * gameSpeed, 0)
-
-def on_up_pressed():
-    global movement
-    if jumping == 0:
-        if movement > 0:
-            movement += -1
-            me.y += -30
-controller.up.on_event(ControllerButtonEvent.PRESSED, on_up_pressed)
 
 def on_b_pressed():
     global jumping
@@ -131,7 +126,15 @@ def makeGoose():
         SpriteKind.enemy)
     goose.set_position(160 + randint(0, 80), 30 * randint(0, 2) + 30)
     goose.set_velocity(-80 * gameSpeed, 0)
-    
+
+def on_left_pressed():
+    global movement
+    if jumping == 0:
+        if movement < 2:
+            movement += 1
+            me.y += 30
+controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
+
 def loseLife():
     global gameRunning
     list2[len(list2) - 1].destroy()
@@ -143,15 +146,59 @@ def loseLife():
         game.show_long_text("WASTED", DialogLayout.BOTTOM)
         game.reset()
 
-def on_down_pressed():
+def on_right_pressed():
     global movement
     if jumping == 0:
-        if movement < 2:
-            movement += 1
-            me.y += 30
-controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
+        if movement > 0:
+            movement += -1
+            me.y += -30
+controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
+
+def makeBedi():
+    global Bedi
+    Bedi = sprites.create(img("""
+            ..55...55..5..55....
+                    ...55...5....55.....
+                    55..55.fffff.5......
+                    .55...fffffff....555
+                    ..55.fffffffff..55..
+                    5...fffffffffff.5...
+                    555.fffefffffff...55
+                    ....ffeeeeeeefff.55.
+                    ...ffefffefffefe....
+                    ..fefe1f1e1f1efe..55
+                    55fefe1f1e1f1eff.55.
+                    ...ffedddddddef.....
+                    ..5.fddd333dddf...55
+                    555..fdddddddff..55.
+                    ....fffdddddff.....5
+                    ....f1f11111f1f..555
+                    5555f1f11111f1f.55..
+                    ....f1f11111f1f.5...
+                    ....f1f11111f1f.....
+                    ..5.f1f11111f1f.5555
+                    555.fffffffffff.....
+                    ....fefccfccfef.555.
+                    .55..ffccfccff..5.55
+                    5.....fccfccf.......
+                    ...55.fffffff..55555
+                    ...5..feefeef......5
+                    ..5...f11f11f.5555..
+                    .55..5.ff.ff.....55.
+                    .5..55..5...5.......
+                    ....5...5...555.....
+        """),
+        SpriteKind.GOD)
+    Bedi.set_position(2000 + randint(0, 1500), 30 * randint(0, 2) + 30)
+    Bedi.set_velocity(-80 * gameSpeed, 0)
 
 def on_on_overlap(sprite, otherSprite):
+    getLife()
+    Bedi.destroy()
+    makeBedi()
+sprites.on_overlap(SpriteKind.player, SpriteKind.GOD, on_on_overlap)
+
+def on_on_overlap2(sprite, otherSprite):
     if jumping == 1 and me.overlaps_with(gooseFeces):
         gooseFeces.destroy()
         pause(500)
@@ -162,8 +209,9 @@ def on_on_overlap(sprite, otherSprite):
         makeGoose()
         gooseFeces.destroy()
         makeDroppings()
-sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap)
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
 
+Bedi: Sprite = None
 goose: Sprite = None
 jumping = 0
 heart: Sprite = None
@@ -214,6 +262,7 @@ info.set_score(0)
 scene.set_background_color(7)
 makeGoose()
 makeDroppings()
+makeBedi()
 gooseFeces.set_velocity(0, 0)
 list2 = []
 for index in range(2):
@@ -231,4 +280,7 @@ def on_forever():
         if info.score() == 700 or gooseFeces.x < 0:
             gooseFeces.destroy()
             makeDroppings()
+        if info.score() == 1500 or Bedi.x < 0:
+            Bedi.destroy()
+            makeBedi()
 forever(on_forever)
