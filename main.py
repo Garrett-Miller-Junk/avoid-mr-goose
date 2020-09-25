@@ -158,7 +158,7 @@ def makeCar():
         """),
         SpriteKind.enemy)
     car.set_position(180 + randint(0, 80), 60)
-    car.set_velocity(-120 * gameSpeed, 0)
+    car.set_velocity(-40 * gameSpeed, 0)
 def loseLife():
     global gameRunning
     list2[len(list2) - 1].destroy()
@@ -216,14 +216,13 @@ def makeBedi():
     Bedi.set_position(2000 + randint(0, 1500), 30 * randint(0, 2) + 30)
     Bedi.set_velocity(-80 * gameSpeed, 0)
 def animateEnv_Road():
-    global env_road
-    env_road = sprites.create(img("""
-            5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
-                    5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5
-        """),
-        SpriteKind.Environment)
-    env_road.set_position(180, 119)
-    env_road.set_velocity(-80 * gameSpeed, 0)
+    env_road_sprite_list.append(sprites.create(img("""
+                5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
+                        5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5
+            """),
+            SpriteKind.Environment))
+    env_road_sprite_list[len(env_road_sprite_list) - 1].set_position(180, 119)
+    env_road_sprite_list[len(env_road_sprite_list) - 1].set_velocity(-80 * gameSpeed, 0)
 
 def on_on_overlap(sprite, otherSprite):
     getLife()
@@ -300,7 +299,7 @@ sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
 
 env_cloud_sprite_list: List[Sprite] = []
 env_cloud_randomizer = 0
-env_road: Sprite = None
+env_road_sprite_list: List[Sprite] = []
 Bedi: Sprite = None
 car: Sprite = None
 goose: Sprite = None
@@ -499,9 +498,12 @@ def on_forever():
             makeBedi()
         if env_cloud_sprite_list[len(env_cloud_sprite_list) - 1].x < randint(0, 100):
             animateEnv_Cloud()
-        if env_cloud_sprite_list[0].x < 50:
+        if env_cloud_sprite_list[0].x < -20:
             env_cloud_sprite_list[0].destroy()
             env_cloud_sprite_list.shift()
-        if env_road.x < 100:
+        if env_road_sprite_list[len(env_road_sprite_list) - 1].x < 100:
             animateEnv_Road()
+        if env_road_sprite_list[0].x < -20:
+            env_road_sprite_list[0].destroy()
+            env_road_sprite_list.shift()
 forever(on_forever)

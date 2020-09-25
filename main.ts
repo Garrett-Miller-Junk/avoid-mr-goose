@@ -149,8 +149,9 @@ function makeCar () {
         . . . . f f f f . . . . f f f . 
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.Enemy)
-    car.setPosition(180 + randint(0, 80), 60)
-    car.setVelocity(-120 * gameSpeed, 0)
+    car.setPosition(180 + randint(0, 80), 100)
+    car.setVelocity(0, 0)
+    car.ax = gameSpeed * -40
 }
 function loseLife () {
     list2[list2.length - 1].destroy()
@@ -283,15 +284,16 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         makeDroppings()
     }
 })
+let car_counter = 0
 let env_cloud_sprite_list: Sprite[] = []
 let env_cloud_randomizer = 0
 let env_road_sprite_list: Sprite[] = []
 let Bedi: Sprite = null
-let car: Sprite = null
 let goose: Sprite = null
 let jumping = 0
 let heart: Sprite = null
 let list2: Sprite[] = []
+let car: Sprite = null
 let gooseFeces: Sprite = null
 let gameRunning = 0
 let movement = 0
@@ -458,10 +460,13 @@ scene.setBackgroundImage(img`
     `)
 makeGoose()
 makeDroppings()
+makeCar()
 makeBedi()
 animateEnv_Cloud()
 animateEnv_Road()
 gooseFeces.setVelocity(0, 0)
+car.setVelocity(0, 0)
+car.ax = 0
 list2 = []
 for (let index = 0; index < 2; index++) {
     getLife()
@@ -479,6 +484,16 @@ forever(function () {
         if (info.score() == 700 || gooseFeces.x < 0) {
             gooseFeces.destroy()
             makeDroppings()
+        }
+        if (info.score() >= 1000 && Math.percentChance(gameSpeed * 0.01) && car_counter <= 0) {
+            makeCar()
+            car_counter = randint(100, 1000)
+        }
+        if (car_counter > 0) {
+            car_counter = car_counter - 1
+        }
+        if (car.x < -20) {
+            car.destroy()
         }
         if (info.score() == 1500 || Bedi.x < 0) {
             Bedi.destroy()
